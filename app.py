@@ -24,11 +24,26 @@ def resolve_project_dir() -> Path:
     return APP_DIR
 
 
+def resolve_file(*relative_candidates: str) -> Path:
+    for relative_candidate in relative_candidates:
+        candidate = PROJECT_DIR / relative_candidate
+        if candidate.exists():
+            return candidate
+
+    return PROJECT_DIR / relative_candidates[0]
+
+
 PROJECT_DIR = resolve_project_dir()
-DATA_FILE = PROJECT_DIR / "WA_Fn-UseC_-Telco-Customer-Churn-cleaned.csv"
+DATA_FILE = resolve_file("WA_Fn-UseC_-Telco-Customer-Churn-cleaned.csv")
 ARTIFACTS_DIR = PROJECT_DIR / "artifacts"
-PIPELINE_FILE = ARTIFACTS_DIR / "telco_churn_logistic_pipeline.joblib"
-METADATA_FILE = ARTIFACTS_DIR / "telco_churn_logistic_pipeline_metadata.json"
+PIPELINE_FILE = resolve_file(
+    "artifacts/telco_churn_logistic_pipeline.joblib",
+    "telco_churn_logistic_pipeline.joblib",
+)
+METADATA_FILE = resolve_file(
+    "artifacts/telco_churn_logistic_pipeline_metadata.json",
+    "telco_churn_logistic_pipeline_metadata.json",
+)
 
 st.set_page_config(
     page_title="Telco Churn Prediction Dashboard",
@@ -370,13 +385,14 @@ def main() -> None:
                     f"DATA_FILE exists={DATA_FILE.exists()}: {DATA_FILE}",
                     f"PIPELINE_FILE exists={PIPELINE_FILE.exists()}: {PIPELINE_FILE}",
                     f"METADATA_FILE exists={METADATA_FILE.exists()}: {METADATA_FILE}",
+                    f"ARTIFACTS_DIR exists={ARTIFACTS_DIR.exists()}: {ARTIFACTS_DIR}",
                     f"CURRENT_WORKING_DIR: {Path.cwd()}",
                     f"APP_DIR: {APP_DIR}",
                 ]
             )
         )
         st.info(
-            "If you deployed from GitHub, confirm that the cleaned CSV and the two files inside the artifacts folder were committed and pushed to the same repo that Streamlit is deploying."
+            "If you deployed from GitHub, confirm that the cleaned CSV and the two model files were committed and pushed to the same repo that Streamlit is deploying. They can live either inside an artifacts folder or directly in the repo root."
         )
         return
 
