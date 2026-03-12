@@ -1,0 +1,54 @@
+{
+  "project": "Telco Customer Churn",
+  "step": "Step 11 - Model Finalization and Packaging",
+  "final_model_type": "LogisticRegression",
+  "comparison_model_type": "RandomForestClassifier",
+  "target_name": "Churn",
+  "target_mapping": {
+    "No": 0,
+    "Yes": 1
+  },
+  "random_state": 42,
+  "training_rows": 5625,
+  "test_rows_held_out": 1407,
+  "categorical_features": [
+    "gender",
+    "Partner",
+    "Dependents",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod"
+  ],
+  "numeric_features": [
+    "SeniorCitizen",
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "service_count",
+    "avg_monthly_value_from_total",
+    "is_new_customer",
+    "has_long_term_contract"
+  ],
+  "engineered_features": [
+    "service_count",
+    "avg_monthly_value_from_total",
+    "is_new_customer",
+    "has_long_term_contract"
+  ],
+  "selected_hyperparameters": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "solver": "lbfgs",
+    "max_iter": 1000
+  },
+  "packaging_reason": "Interpretation-first project, so Logistic Regression is packaged as the primary final model."
+}
