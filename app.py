@@ -6,7 +6,25 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-PROJECT_DIR = Path(__file__).resolve().parent
+APP_DIR = Path(__file__).resolve().parent
+
+
+def resolve_project_dir() -> Path:
+    candidate_dirs = [
+        APP_DIR,
+        Path.cwd(),
+        Path.cwd() / "Telco-Customer-Churn",
+        APP_DIR.parent / "Telco-Customer-Churn",
+    ]
+
+    for candidate in candidate_dirs:
+        if (candidate / "WA_Fn-UseC_-Telco-Customer-Churn-cleaned.csv").exists() and (candidate / "artifacts").exists():
+            return candidate
+
+    return APP_DIR
+
+
+PROJECT_DIR = resolve_project_dir()
 DATA_FILE = PROJECT_DIR / "WA_Fn-UseC_-Telco-Customer-Churn-cleaned.csv"
 ARTIFACTS_DIR = PROJECT_DIR / "artifacts"
 PIPELINE_FILE = ARTIFACTS_DIR / "telco_churn_logistic_pipeline.joblib"
@@ -343,7 +361,23 @@ def show_risk_summary(scored_df: pd.DataFrame, threshold: float) -> None:
 
 def main() -> None:
     if not DATA_FILE.exists() or not PIPELINE_FILE.exists() or not METADATA_FILE.exists():
-        st.error("Required data or model files are missing. Make sure the cleaned CSV and saved artifacts exist in the project.")
+        st.error("Required data or model files are missing. Make sure the cleaned CSV and saved artifacts exist in the deployed project.")
+        st.write("Checked these paths:")
+        st.code(
+            "\n".join(
+                [
+                    f"PROJECT_DIR: {PROJECT_DIR}",
+                    f"DATA_FILE exists={DATA_FILE.exists()}: {DATA_FILE}",
+                    f"PIPELINE_FILE exists={PIPELINE_FILE.exists()}: {PIPELINE_FILE}",
+                    f"METADATA_FILE exists={METADATA_FILE.exists()}: {METADATA_FILE}",
+                    f"CURRENT_WORKING_DIR: {Path.cwd()}",
+                    f"APP_DIR: {APP_DIR}",
+                ]
+            )
+        )
+        st.info(
+            "If you deployed from GitHub, confirm that the cleaned CSV and the two files inside the artifacts folder were committed and pushed to the same repo that Streamlit is deploying."
+        )
         return
 
     reference_df = load_data()
